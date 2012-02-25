@@ -7,7 +7,11 @@ set (gqrx_VERSION_MINOR 0)
 set ( CMAKE_BUILD_TYPE Release )
 
 add_definitions ( -Wall )
+
+#TODO- this should probably be done with a config file
+# rather than a compile option
 add_definitions(-DVERSION="\"${VERSION_MAJOR}"."${VERSION_MINOR}"\")
+
 find_package ( Qt4 REQUIRED )
 
 include ( ${QT_USE_FILE} )
