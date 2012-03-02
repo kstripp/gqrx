@@ -34,17 +34,12 @@ include_directories (
 # Setup GNURadio
 #####################################################################
 
-##TODO- make these paths not hard coded
-#include_directories(
-#	/usr/local/include
-#	/usr/local/include/gnuradio)
-
+#TODO: The include directories here seem a bit hacky... 
 
 #---GNU Radio Core-------------------------------
 find_package( GR_Core REQUIRED )
 include_directories( ${GR_CORE_INCLUDE_DIR} )
 include_directories( ${GR_CORE_INCLUDE_DIR}/gnuradio )
-message(STATUS "GR_CORE_INCLUDE_DIR: "${GR_CORE_INCLUDE_DIR})
 set( gr_link_libs ${GR_CORE_LIBRARY})
 
 #---GNU Radio FCD--------------------------------
@@ -54,13 +49,11 @@ include_directories( ${GR_CORE_INCLUDE_DIR}/fcd )
 set( gr_link_libs ${gr_link_libs} ${FCD_LIBRARY})
 
 #---GNU Radio Audio------------------------------
-#find_library(GR_AUDIO_LIBRARY NAMES gnuradio-audio)
 find_package(GR_Audio REQUIRED )
 include_directories( ${GR_AUDIO_INCLUDE_DIR} )
 include_directories( ${GR_CORE_INCLUDE_DIR}/gnuradio )
 set( gr_link_libs ${gr_link_libs} ${GR_AUDIO_LIBRARY})
 
-MESSAGE( STATUS "CMAKE_INCLUDE_PATH: " ${INCLUDE_DIRECTORIES} )
 #####################################################################
 # Header files
 #####################################################################
@@ -163,14 +156,8 @@ set ( gqrx_MOCS
 QT4_WRAP_CPP(MOCS ${gqrx_MOCS})
 
 #####################################################################
-# Executable
+# Compile and Link
 #####################################################################
 add_executable ( gqrx ${gqrx_SRCS} ${UIS} ${RSCS} ${TRS} ${MOCS} )
-
-
-#####################################################################
-# Linking Libraries
-#####################################################################
-
 target_link_libraries ( gqrx  ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} )
 target_link_libraries (gqrx ${gr_link_libs} )
