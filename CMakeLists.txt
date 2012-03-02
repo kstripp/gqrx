@@ -1,31 +1,61 @@
+#####################################################################
+# Setup
+#####################################################################
 cmake_minimum_required( VERSION 2.6 )
 project( gqrx )
-
 set (gqrx_VERSION_MAJOR 0)
 set (gqrx_VERSION_MINOR 0)
-
 set ( CMAKE_BUILD_TYPE Release )
 
+list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+
+#####################################################################
+# Compiler flags
+#####################################################################
 add_definitions ( -Wall )
 
 #TODO- this should probably be done with a config file
 # rather than a compile option
 add_definitions(-DVERSION="\"${VERSION_MAJOR}"."${VERSION_MINOR}"\")
 
+
+#####################################################################
+# Setup QT4
+#####################################################################
 find_package ( Qt4 REQUIRED )
 
 include ( ${QT_USE_FILE} )
 include_directories (
 	${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
-	${QT_QTCORE_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR} ${QT_QTCORE_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR}
-	
-	#TODO- make these paths not hard coded
+	${QT_QTCORE_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR} ${QT_QTCORE_INCLUDE_DIR}
+	${QT_QTGUI_INCLUDE_DIR})
+
+#####################################################################
+# Setup GNURadio
+#####################################################################
+
+#TODO- make these paths not hard coded
+include_directories(
 	/usr/local/include
 	/usr/local/include/gnuradio)
 
-###########################################################
+
+#---GNU Radio Core-------------------------------
+find_library(GR_CORE_LIBRARY NAMES gnuradio-core)
+set( gr_link_libs ${GR_CORE_LIBRARY})
+
+#---GNU Radio FCD--------------------------------
+find_package ( FCD REQUIRED )
+include_directories( ${FCD_INCLUDE_DIR} )
+set( gr_link_libs ${gr_link_libs} ${FCD_LIBRARY})
+
+#---GNU Radio Audio------------------------------
+find_library(GR_AUDIO_LIBRARY NAMES gnuradio-audio)
+set( gr_link_libs ${gr_link_libs} ${GR_AUDIO_LIBRARY})
+
+#####################################################################
 # Header files
-###########################################################
+#####################################################################
 set ( gqrx_HDRS
 	receiver.h
 	dsp/rx_fft.h
@@ -49,9 +79,9 @@ set ( gqrx_HDRS
 	dsp/correct_iq_cc.h
 	)
 
-###########################################################
+#####################################################################
 # Source files
-###########################################################
+#####################################################################
 set ( gqrx_SRCS
 	receiver.cpp
 	main.cpp
@@ -124,26 +154,15 @@ set ( gqrx_MOCS
 	)
 QT4_WRAP_CPP(MOCS ${gqrx_MOCS})
 
-###############################################################################
+#####################################################################
 # Executable
-###############################################################################
+#####################################################################
 add_executable ( gqrx ${gqrx_SRCS} ${UIS} ${RSCS} ${TRS} ${MOCS} )
 
 
-###############################################################################
+#####################################################################
 # Linking Libraries
-###############################################################################
+#####################################################################
 
-# QT Libraries
 target_link_libraries ( gqrx  ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} )
-
-# GNU Radio Libraries
-# gnuradio-core
-# gnuradio-audio
-# gnuradio-fcd
-
-find_library(GR_CORE_LIBRARY NAMES gnuradio-core)
-find_library(GR_FCD_LIBRARY NAMES gnuradio-fcd)
-find_library(GR_AUDIO_LIBRARY NAMES gnuradio-audio)
-
-target_link_libraries (gqrx ${GR_CORE_LIBRARY} ${GR_FCD_LIBRARY} ${GR_AUDIO_LIBRARY})
+target_link_libraries (gqrx ${gr_link_libs} )
