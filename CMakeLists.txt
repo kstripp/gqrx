@@ -124,5 +124,26 @@ set ( gqrx_MOCS
 	)
 QT4_WRAP_CPP(MOCS ${gqrx_MOCS})
 
+###############################################################################
+# Executable
+###############################################################################
 add_executable ( gqrx ${gqrx_SRCS} ${UIS} ${RSCS} ${TRS} ${MOCS} )
+
+
+###############################################################################
+# Linking Libraries
+###############################################################################
+
+# QT Libraries
 target_link_libraries ( gqrx  ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} )
+
+# GNU Radio Libraries
+# gnuradio-core
+# gnuradio-audio
+# gnuradio-fcd
+
+find_library(GR_CORE_LIBRARY NAMES gnuradio-core)
+find_library(GR_FCD_LIBRARY NAMES gnuradio-fcd)
+find_library(GR_AUDIO_LIBRARY NAMES gnuradio-audio)
+
+target_link_libraries (gqrx ${GR_CORE_LIBRARY} ${GR_FCD_LIBRARY} ${GR_AUDIO_LIBRARY})
