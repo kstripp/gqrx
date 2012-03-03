@@ -1,0 +1,3 @@
+/* Configuration and settings for QGRX */
+
+#cmakedefine USE_FCD
