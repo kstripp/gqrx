@@ -20,6 +20,7 @@
 #ifndef RECEIVER_H
 #define RECEIVER_H
 
+#include "config.h"
 #include <gr_top_block.h>
 #include <gr_audio_sink.h>
 #include <gr_complex_to_xxx.h>
@@ -32,7 +33,6 @@
 #include <gr_wavfile_source.h>
 #include <gr_null_sink.h>
 #include "dsp/correct_iq_cc.h"
-#include <dsp/rx_source_fcd.h>
 #include <dsp/rx_filter.h>
 #include <dsp/rx_meter.h>
 #include <dsp/rx_agc_xx.h>
@@ -42,6 +42,9 @@
 #include <dsp/resampler_ff.h>
 #include <dsp/sniffer_f.h>
 
+#ifdef USE_FCD
+#include <dsp/rx_source_fcd.h>
+#endif /* USE_FCD */
 
 /*! \defgroup DSP Digital signal processing library based on GNU Radio */
 

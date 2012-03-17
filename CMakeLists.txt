@@ -9,6 +9,12 @@ set ( CMAKE_BUILD_TYPE Release )
 
 list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
+configure_file(
+	"${PROJECT_SOURCE_DIR}/config.h.in"
+    "${PROJECT_BINARY_DIR}/config.h"
+	)
+
+
 #####################################################################
 # Compiler flags
 #####################################################################
@@ -43,10 +49,13 @@ include_directories( ${GR_CORE_INCLUDE_DIR}/gnuradio )
 set( gr_link_libs ${GR_CORE_LIBRARY})
 
 #---GNU Radio FCD--------------------------------
-find_package ( FCD REQUIRED )
-include_directories( ${FCD_INCLUDE_DIR} )
-include_directories( ${GR_CORE_INCLUDE_DIR}/fcd )
-set( gr_link_libs ${gr_link_libs} ${FCD_LIBRARY})
+option( USE_FCD "Use the FCD Driver" ON )
+if (USE_FCD)
+	find_package ( FCD REQUIRED )
+	include_directories( ${FCD_INCLUDE_DIR} )
+	include_directories( ${GR_CORE_INCLUDE_DIR}/fcd )
+	set( gr_link_libs ${gr_link_libs} ${FCD_LIBRARY})
+endif(USE_FCD)
 
 #---GNU Radio Audio------------------------------
 find_package(GR_Audio REQUIRED )

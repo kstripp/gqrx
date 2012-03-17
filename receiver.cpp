@@ -20,6 +20,7 @@
 #include <iostream>
 #include <cmath>
 
+#include "config.h"
 #include <gr_top_block.h>
 #include <gr_audio_sink.h>
 #include <gr_complex_to_xxx.h>
@@ -27,7 +28,6 @@
 #include <gr_simple_squelch_cc.h>
 
 #include <receiver.h>
-#include <dsp/rx_source_fcd.h>
 #include "dsp/correct_iq_cc.h"
 #include <dsp/rx_filter.h>
 #include <dsp/rx_meter.h>
@@ -36,6 +36,9 @@
 #include <dsp/rx_fft.h>
 #include <dsp/rx_agc_xx.h>
 
+#ifdef USE_FCD
+#include <dsp/rx_source_fcd.h>
+#endif /* USE_FCD */
 
 
 /*! \brief Public contructor.
