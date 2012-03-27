@@ -1,3 +1,6 @@
 /* Configuration and settings for QGRX */
 
 #cmakedefine USE_FCD
+
+#define DEFAULT_FREQ=437600000
+#define DEFAULT_GAIN=20.0
