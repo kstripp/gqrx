@@ -1,9 +1,9 @@
 ########################################################################
-# Find the library for the USRP Hardware Driver
+# Find the library for the UHD interface
 ########################################################################
 
 
-# - Try to find LibUHD
+# - Try to find Gr-UHD
 # Once done, this will define 
 #
 #  UHD_FOUND - system has gr-uhd
@@ -13,25 +13,25 @@
 include(LibFindMacros)
 
 # Use pkg-config to get hints about paths
-libfind_pkg_check_modules(uhd_PKGCONF uhd)
+libfind_pkg_check_modules(gnuradio-uhd_PKGCONF gnuradio-uhd)
 
 # Include dir
-find_path(UHD_INCLUDE_DIR
-	NAMES uhd/device.hpp
-	PATHS ${UHD_PKGCONF_INCLUDE_DIRS}
+find_path(GR-UHD_INCLUDE_DIR
+	NAMES gnuradio/gr_uhd_usrp_source.h
+	PATHS ${GNURADIO-UHD_PKGCONF_INCLUDE_DIRS}
 	)
 
 # Finally the library itself
-find_library(UHD_LIBRARY
-	NAMES uhd
-	PATHS ${UHD_PKGCONF_LIBRARY_DIRS}
+find_library(GR-UHD_LIBRARY
+	NAMES gnuradio-uhd
+	PATHS ${GNURADIO-UHD_PKGCONF_LIBRARY_DIRS}
 	)
 
 # Set the include dir variables and the libraries and let libfind_process do the rest.
 # NOTE: Singular variables for this library, plural for libraries this this lib depends on.
 set(UHD_PROCESS_INCLUDES UHD_INCLUDE_DIR )
 set(UHD_PROCESS_LIBS UHD_LIBRARY )
-libfind_process(uhd)
+libfind_process(gnuradio-uhd)
 
 
 ########################################################################
