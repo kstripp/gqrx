@@ -46,6 +46,10 @@
 #include <dsp/rx_source_fcd.h>
 #endif /* USE_FCD */
 
+#ifdef USE_UHD
+#include <dsp/rx_source_uhd.h>
+#endif /* USE_UHD */
+
 /*! \defgroup DSP Digital signal processing library based on GNU Radio */
 
 

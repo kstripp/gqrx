@@ -40,6 +40,10 @@
 #include <dsp/rx_source_fcd.h>
 #endif /* USE_FCD */
 
+#ifdef USE_UHD
+#include <dsp/rx_source_uhd.h>
+#endif /* USE_UHD */
+
 
 /*! \brief Public contructor.
  *  \param input_device Input device specifier, e.g. hw:1 for FCD source.
@@ -58,8 +62,13 @@ receiver::receiver(const std::string input_device, const std::string audio_devic
 {
     tb = gr_make_top_block("gqrx");
 
+#ifdef USE_FCD
     src = make_rx_source_fcd(input_device);
-    src->set_freq(d_rf_freq);
+#endif
+#ifdef USE_UHD
+    src = make_rx_source_uhd(input_device);
+#endif
+	src->set_freq(d_rf_freq);
 
     dc_corr = make_dc_corr_cc(0.01f);
     fft = make_rx_fft_c(4096, 0, false);

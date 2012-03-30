@@ -73,7 +73,8 @@ public:
     void set_iq_corr(double gain, double phase);
 
 private:
-    uhd_source_c_sptr   d_uhd_src;   /*! USRP source. */
+    //rx_source_uhd_sptr  d_uhd_src;   /*! USRP source. */
+	boost::shared_ptr<uhd_usrp_source>	d_uhd_src;
 
     std::vector<double> d_sample_rates;
     double              d_freq;

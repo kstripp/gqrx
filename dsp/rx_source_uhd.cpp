@@ -36,9 +36,10 @@ rx_source_uhd::rx_source_uhd(const std::string device_name)
       d_freq(DEFAULT_FREQ),
       d_gain(DEFAULT_GAIN)
 {
-    d_uhd_src = uhd_make_usrp_source(device_name);
+    /** TODO: check the uhd_make_usrp_source call **/
+	d_uhd_src = uhd_make_usrp_source("","fc32",1);
     d_uhd_src->set_freq(DEFAULT_FREQ);
-    d_uhd_src->set_lna_gain((float)DEFAULT_GAIN);
+    d_uhd_src->set_gain((float)DEFAULT_GAIN);
 
     /** TODO: check error */
 
@@ -49,7 +50,7 @@ rx_source_uhd::rx_source_uhd(const std::string device_name)
     connect(d_uhd_src, 0, self(), 0);
 }
 
-/*
+
 rx_source_uhd::~rx_source_uhd()
 {
 
@@ -62,9 +63,9 @@ void rx_source_uhd::select_device(const std::string device_name)
     lock();
     disconnect(d_uhd_src, 0, self(), 0);
     d_uhd_src.reset();
-    d_uhd_src = uhd_make_source_c(device_name);
+	d_uhd_src = gnuradio::uhd_make_usrp_source("","fc32",1);
     d_uhd_src->set_freq((float) d_freq);
-    d_uhd_src->set_lna_gain((float) d_gain);
+    d_uhd_src->set_gain((float) d_gain);
     connect(d_uhd_src, 0, self(), 0);
     unlock();
 }
@@ -73,22 +74,27 @@ void rx_source_uhd::set_freq(double freq)
 {
     if ((freq >= get_freq_min()) && (freq <= get_freq_max())) {
         d_freq = freq;
-        d_uhd_src->set_freq((float) d_freq);
+
+		/** TODO: make the channel section a variable **/
+        d_uhd_src->set_center_freq((float) d_freq, 0);
     }
 }
 
 double rx_source_uhd::get_freq()
 {
-    return d_freq;
+	/** TODO: make channel selection a variable **/
+    return d_uhd_src->get_center_freq(0)
 }
 
 double rx_source_uhd::get_freq_min()
 {
-    return 50.0e6;
+    /** TODO: find a way to get this from get_freq_range() **/
+	return 50.0e6;
 }
 
 double rx_source_uhd::get_freq_max()
 {
+    /** TODO: find a way to get this from get_freq_range() **/
     return 2.0e9;
 }
 
@@ -96,34 +102,41 @@ void rx_source_uhd::set_gain(double gain)
 {
     if ((gain >= get_gain_min()) && (gain <= get_gain_max())) {
         d_gain = gain;
-        d_uhd_src->set_lna_gain((float)gain);
+
+		/** TODO: make channel selection a variable **/
+        d_uhd_src->set_gain((float)gain,0);
     }
 }
 
 double rx_source_uhd::get_gain()
 {
-    return d_gain;
+	/** TODO: make channel selection a variable **/
+    return d_uhd_src->get_gaint(0);
 }
 
 double rx_source_uhd::get_gain_min()
 {
-    return -5.0;
+    // FIXME: magic numbers!!
+	return -5.0;
 }
 
 double rx_source_uhd::get_gain_max()
 {
-    return 30.0;
+    // FIXME: magic numbers!!
+	return 30.0;
 }
 
 void rx_source_uhd::set_sample_rate(double sps)
 {
-    // nothing to do;
+    d_uhd_src->set_samp_rate(sps);
 }
 
 double rx_source_uhd::get_sample_rate()
 {
-    return 96000.0;
+    return d_uhd_src->get_samp_rate();
 }
+
+// LEFT OFF HERE
 
 std::vector<double> rx_source_uhd::get_sample_rates()
 {
@@ -137,12 +150,17 @@ void rx_source_uhd::set_freq_corr(int ppm)
     d_uhd_src->set_freq((float) d_freq);
 }
 
+// TODO: allow for automatic offset correction
+// TODO: turn channel number into a variable
 void rx_source_uhd::set_dc_corr(double dci, double dcq)
 {
-    d_uhd_src->set_dc_corr(dci, dcq);
+	std::complex<double> offset (dci, dcq);
+	d_uhd_src->set_dc_offset(offset, 0);
 }
 
+// TODO: turn channel number into a variable
 void rx_source_uhd::set_iq_corr(double gain, double phase)
 {
-    d_uhd_src->set_iq_corr(gain, phase);
+	std::complex<double> correction(gain, phase);
+	d_uhd_src->set_iq_corr(correction, 0);
 }

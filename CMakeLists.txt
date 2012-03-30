@@ -49,13 +49,26 @@ include_directories( ${GR_CORE_INCLUDE_DIR}/gnuradio )
 set( gr_link_libs ${GR_CORE_LIBRARY})
 
 #---GNU Radio FCD--------------------------------
-option( USE_FCD "Use the FCD Driver" ON )
+option( USE_FCD "Use the FCD Driver" OFF )
 if (USE_FCD)
 	find_package ( FCD REQUIRED )
 	include_directories( ${FCD_INCLUDE_DIR} )
 	include_directories( ${GR_CORE_INCLUDE_DIR}/fcd )
 	set( gr_link_libs ${gr_link_libs} ${FCD_LIBRARY})
+	set( gqrx_HDRS ${gqrx_HDRS} dsp/rx_source_fcd.h )
+	set( gqrx_SRCS ${gqrx_SRCS} dsp/rx_source_fcd.cpp )
 endif(USE_FCD)
+
+#---GNU Radio UHD--------------------------------
+option( USE_UHD "Use the UHD Driver" ON )
+if (USE_UHD)
+	find_package ( UHD REQUIRED )
+	include_directories( ${UHD_INCLUDE_DIR} )
+	include_directories( ${GR_CORE_INCLUDE_DIR}/uhd )
+	set( gr_link_libs ${gr_link_libs} ${UHD_LIBRARY})
+	set( gqrx_HDRS ${gqrx_HDRS} dsp/rx_source_uhd.h )
+	set( gqrx_SRCS ${gqrx_SRCS} dsp/rx_source_uhd.cpp )
+endif(USE_UHD)
 
 #---GNU Radio Audio------------------------------
 find_package(GR_Audio REQUIRED )
@@ -66,7 +79,7 @@ set( gr_link_libs ${gr_link_libs} ${GR_AUDIO_LIBRARY})
 #####################################################################
 # Header files
 #####################################################################
-set ( gqrx_HDRS
+set ( gqrx_HDRS ${gqrx_HDRS}
 	receiver.h
 	dsp/rx_fft.h
 	dsp/rx_filter.h
@@ -83,7 +96,6 @@ set ( gqrx_HDRS
 	tlm/arissat/scale_psu.h
 	tlm/arissat/scale_ppt.h
 	dsp/rx_source_base.h
-	dsp/rx_source_fcd.h
 	dsp/rx_agc_xx.h
 	dsp/agc_impl.h
 	dsp/correct_iq_cc.h
@@ -92,7 +104,7 @@ set ( gqrx_HDRS
 #####################################################################
 # Source files
 #####################################################################
-set ( gqrx_SRCS
+set ( gqrx_SRCS ${gqrx_SRCS}
 	receiver.cpp
 	main.cpp
 	mainwindow.cpp
@@ -121,7 +133,6 @@ set ( gqrx_SRCS
 	tlm/arissat/scale_psu.c
 	tlm/arissat/scale_ppt.c
 	dsp/rx_source_base.cpp
-	dsp/rx_source_fcd.cpp
 	dsp/rx_agc_xx.cpp
 	dsp/agc_impl.cpp
 	dsp/correct_iq_cc.cpp

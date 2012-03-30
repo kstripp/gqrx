@@ -1,6 +1,7 @@
 /* Configuration and settings for QGRX */
 
 #cmakedefine USE_FCD
+#cmakedefine USE_UHD
 
-#define DEFAULT_FREQ=437600000
-#define DEFAULT_GAIN=20.0
+#define DEFAULT_FREQ 437600000
+#define DEFAULT_GAIN 20.0
