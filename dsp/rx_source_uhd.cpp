@@ -37,8 +37,13 @@ rx_source_uhd::rx_source_uhd(const std::string device_name)
       d_gain(DEFAULT_GAIN)
 {
     /** TODO: check the uhd_make_usrp_source call **/
-	d_uhd_src = uhd_make_usrp_source("","fc32",1);
-    d_uhd_src->set_freq(DEFAULT_FREQ);
+	std::string device_addr = "";
+/*	const uhd::io_type_t io_type = "fc32";
+	size_t numChannels = 1;
+*/
+	d_uhd_src = uhd_make_usrp_source(uhd::device_addr_t(""), 
+			uhd::stream_args_t("fc32"));
+    d_uhd_src->set_center_freq(DEFAULT_FREQ);
     d_uhd_src->set_gain((float)DEFAULT_GAIN);
 
     /** TODO: check error */
@@ -63,8 +68,9 @@ void rx_source_uhd::select_device(const std::string device_name)
     lock();
     disconnect(d_uhd_src, 0, self(), 0);
     d_uhd_src.reset();
-	d_uhd_src = gnuradio::uhd_make_usrp_source("","fc32",1);
-    d_uhd_src->set_freq((float) d_freq);
+	d_uhd_src = uhd_make_usrp_source(uhd::device_addr_t(""), 
+			uhd::stream_args_t("fc32"));
+    d_uhd_src->set_center_freq((float) d_freq);
     d_uhd_src->set_gain((float) d_gain);
     connect(d_uhd_src, 0, self(), 0);
     unlock();
@@ -83,7 +89,7 @@ void rx_source_uhd::set_freq(double freq)
 double rx_source_uhd::get_freq()
 {
 	/** TODO: make channel selection a variable **/
-    return d_uhd_src->get_center_freq(0)
+    return d_uhd_src->get_center_freq(0);
 }
 
 double rx_source_uhd::get_freq_min()
@@ -111,7 +117,7 @@ void rx_source_uhd::set_gain(double gain)
 double rx_source_uhd::get_gain()
 {
 	/** TODO: make channel selection a variable **/
-    return d_uhd_src->get_gaint(0);
+    return d_uhd_src->get_gain(0);
 }
 
 double rx_source_uhd::get_gain_min()
@@ -136,18 +142,17 @@ double rx_source_uhd::get_sample_rate()
     return d_uhd_src->get_samp_rate();
 }
 
-// LEFT OFF HERE
-
 std::vector<double> rx_source_uhd::get_sample_rates()
 {
     return d_sample_rates;
 }
 
+//I don't think UHD supports this
 void rx_source_uhd::set_freq_corr(int ppm)
 {
-    d_uhd_src->set_freq_corr(ppm);
+    //d_uhd_src->set_freq_corr(ppm);
     // re-tune after frequency correction
-    d_uhd_src->set_freq((float) d_freq);
+    d_uhd_src->set_center_freq((float) d_freq);
 }
 
 // TODO: allow for automatic offset correction
@@ -162,5 +167,5 @@ void rx_source_uhd::set_dc_corr(double dci, double dcq)
 void rx_source_uhd::set_iq_corr(double gain, double phase)
 {
 	std::complex<double> correction(gain, phase);
-	d_uhd_src->set_iq_corr(correction, 0);
+	d_uhd_src->set_iq_balance(correction, 0);
 }
